@@ -10,29 +10,40 @@
     <div v-else>
       <!-- Revenue & Financial KPIs -->
       <div class="stats-grid-finance">
-        <div class="stat-card revenue-card">
-          <div class="stat-label">{{ t('finance.totalRevenue') }}</div>
-          <div class="stat-value">{{ formatCurrency(revenueMetrics.totalRevenue) }}</div>
+        <StatCard
+          class="revenue-card"
+          :label="t('finance.totalRevenue')"
+          :value="formatCurrency(revenueMetrics.totalRevenue)"
+          variant="neutral"
+        >
           <div class="stat-change positive">
             <span class="change-icon">↑</span>
             {{ t('finance.fromOrders', { count: revenueMetrics.orderCount }) }}
           </div>
-        </div>
-        <div class="stat-card cost-card">
-          <div class="stat-label">{{ t('finance.totalCosts') }}</div>
-          <div class="stat-value">{{ formatCurrency(totalCosts) }}</div>
+        </StatCard>
+        <StatCard
+          class="cost-card"
+          :label="t('finance.totalCosts')"
+          :value="formatCurrency(totalCosts)"
+          variant="neutral"
+        >
           <div class="stat-meta">{{ t('finance.costBreakdown') }}</div>
-        </div>
-        <div class="stat-card profit-card">
-          <div class="stat-label">{{ t('finance.netProfit') }}</div>
-          <div class="stat-value">{{ formatCurrency(netProfit) }}</div>
+        </StatCard>
+        <StatCard
+          class="profit-card"
+          :label="t('finance.netProfit')"
+          :value="formatCurrency(netProfit)"
+          variant="neutral"
+        >
           <div class="stat-meta">{{ profitMargin }}% {{ t('finance.margin') }}</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-label">{{ t('finance.avgOrderValue') }}</div>
-          <div class="stat-value">{{ formatCurrency(revenueMetrics.avgOrderValue) }}</div>
+        </StatCard>
+        <StatCard
+          :label="t('finance.avgOrderValue')"
+          :value="formatCurrency(revenueMetrics.avgOrderValue)"
+          variant="neutral"
+        >
           <div class="stat-meta">{{ t('finance.perOrderRevenue') }}</div>
-        </div>
+        </StatCard>
       </div>
 
       <!-- Monthly Revenue vs Cost Chart -->
@@ -80,11 +91,11 @@
         <div class="chart-container">
           <div class="bar-chart">
             <div class="y-axis">
-              <span>{{ currencySymbol }}25K</span>
-              <span>{{ currencySymbol }}20K</span>
-              <span>{{ currencySymbol }}15K</span>
-              <span>{{ currencySymbol }}10K</span>
-              <span>{{ currencySymbol }}5K</span>
+              <span>{{ currencySymbol }}{{ maxSpendingValue }}K</span>
+              <span>{{ currencySymbol }}{{ Math.round(maxSpendingValue * 0.8) }}K</span>
+              <span>{{ currencySymbol }}{{ Math.round(maxSpendingValue * 0.6) }}K</span>
+              <span>{{ currencySymbol }}{{ Math.round(maxSpendingValue * 0.4) }}K</span>
+              <span>{{ currencySymbol }}{{ Math.round(maxSpendingValue * 0.2) }}K</span>
               <span>{{ currencySymbol }}0</span>
             </div>
             <div class="chart-area">
@@ -178,11 +189,13 @@ import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
 import { formatCurrency as formatCurrencyUtil } from '../utils/currency'
 import CostDetailModal from '../components/CostDetailModal.vue'
+import StatCard from '../components/StatCard.vue'
 
 export default {
   name: 'Spending',
   components: {
-    CostDetailModal
+    CostDetailModal,
+    StatCard
   },
   setup() {
     const { t, currentCurrency } = useI18n()
@@ -347,6 +360,14 @@ export default {
       return Math.ceil(max / 1000) // Return in K
     })
 
+    // Max value for cost-flow chart scaling (sum of all cost segments per month)
+    const maxSpendingValue = computed(() => {
+      const max = Math.max(...monthlySpending.value.map(m =>
+        m.procurement + m.operational + m.labor + m.overhead
+      ), 0)
+      return Math.ceil(max / 1000) // Return in K
+    })
+
     const loadData = async () => {
       try {
         loading.value = true
@@ -384,7 +405,7 @@ export default {
     })
 
     const getBarHeight = (value) => {
-      const maxValue = 25000
+      const maxValue = maxSpendingValue.value * 1000
       return (value / maxValue) * 100
     }
 
@@ -473,6 +494,7 @@ export default {
       profitMargin,
       monthlyRevenue,
       maxRevenueValue,
+      maxSpendingValue,
       formatCurrency,
       currencySymbol,
       getBarHeight,
@@ -501,11 +523,11 @@ export default {
 }
 
 .stat-change.positive {
-  color: #059669;
+  color: var(--color-success-solid);
 }
 
 .stat-change.negative {
-  color: #dc2626;
+  color: var(--color-danger-solid);
 }
 
 .change-icon {
@@ -521,13 +543,22 @@ export default {
   display: flex;
   gap: 1.5rem;
   font-size: 0.875rem;
+  flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+  .chart-card .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
 }
 
 .legend-item {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .legend-dot {
@@ -536,12 +567,12 @@ export default {
   border-radius: 3px;
 }
 
-.legend-dot.procurement { background: #3b82f6; }
-.legend-dot.operational { background: #8b5cf6; }
-.legend-dot.labor { background: #10b981; }
-.legend-dot.overhead { background: #f59e0b; }
-.legend-dot.revenue-color { background: #0f172a; }
-.legend-dot.cost-color { background: #ef4444; }
+.legend-dot.procurement { background: var(--chart-cat-1); }
+.legend-dot.operational { background: var(--chart-cat-2); }
+.legend-dot.labor { background: var(--chart-cat-3); }
+.legend-dot.overhead { background: var(--chart-cat-4); }
+.legend-dot.revenue-color { background: var(--color-text); }
+.legend-dot.cost-color { background: var(--color-danger-solid); }
 
 .stats-grid-finance {
   display: grid;
@@ -551,21 +582,21 @@ export default {
 }
 
 .revenue-card {
-  border-left: 4px solid #0f172a;
+  border-left: 4px solid var(--color-text);
 }
 
 .cost-card {
-  border-left: 4px solid #ef4444;
+  border-left: 4px solid var(--color-danger-solid);
 }
 
 .profit-card {
-  border-left: 4px solid #3b82f6;
+  border-left: 4px solid var(--color-info-solid);
 }
 
 .stat-meta {
   margin-top: 0.5rem;
   font-size: 0.813rem;
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .bar-group-revenue {
@@ -597,11 +628,11 @@ export default {
 }
 
 .revenue-bar {
-  background: #0f172a;
+  background: var(--color-text);
 }
 
 .cost-bar {
-  background: #ef4444;
+  background: var(--color-danger-solid);
 }
 
 .revenue-bar:hover, .cost-bar:hover {
@@ -611,12 +642,14 @@ export default {
 
 .chart-container {
   padding: 1.5rem 0;
+  overflow-x: auto;
 }
 
 .bar-chart {
   display: flex;
   gap: 1.5rem;
   height: 350px;
+  min-width: 640px;
 }
 
 .y-axis {
@@ -625,8 +658,8 @@ export default {
   justify-content: space-between;
   padding-right: 1rem;
   font-size: 0.75rem;
-  color: #94a3b8;
-  border-right: 1px solid #e2e8f0;
+  color: var(--color-text-faint);
+  border-right: 1px solid var(--color-border);
 }
 
 .chart-area {
@@ -676,10 +709,10 @@ export default {
   border-radius: 6px 6px 0 0;
 }
 
-.bar-segment.procurement { background: #3b82f6; }
-.bar-segment.operational { background: #8b5cf6; }
-.bar-segment.labor { background: #10b981; }
-.bar-segment.overhead { background: #f59e0b; }
+.bar-segment.procurement { background: var(--chart-cat-1); }
+.bar-segment.operational { background: var(--chart-cat-2); }
+.bar-segment.labor { background: var(--chart-cat-3); }
+.bar-segment.overhead { background: var(--chart-cat-4); }
 
 .bar-segment:hover {
   opacity: 0.8;
@@ -689,13 +722,25 @@ export default {
   margin-top: 0.5rem;
   font-size: 0.75rem;
   font-weight: 600;
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .two-column-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
   gap: 1.75rem;
+}
+
+@media (max-width: 1023px) {
+  .two-column-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .two-column-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .category-list {
@@ -718,26 +763,26 @@ export default {
 
 .category-name {
   font-weight: 600;
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 .category-amount {
   font-weight: 700;
-  color: #2563eb;
+  color: var(--color-primary-600);
   font-size: 1.125rem;
 }
 
 .category-bar-container {
   width: 100%;
   height: 8px;
-  background: #f1f5f9;
+  background: var(--color-track);
   border-radius: 4px;
   overflow: hidden;
 }
 
 .category-bar {
   height: 100%;
-  background: linear-gradient(90deg, #3b82f6 0%, #2563eb 100%);
+  background: linear-gradient(90deg, var(--color-primary-400) 0%, var(--color-primary-600) 100%);
   border-radius: 4px;
   transition: width 0.6s ease;
 }
@@ -749,7 +794,7 @@ export default {
 }
 
 .percentage {
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .change {
@@ -757,11 +802,11 @@ export default {
 }
 
 .change.positive {
-  color: #059669;
+  color: var(--color-success-solid);
 }
 
 .change.negative {
-  color: #dc2626;
+  color: var(--color-danger-solid);
 }
 
 .transactions-card {
@@ -771,6 +816,7 @@ export default {
 
 .transactions-table-container {
   overflow-y: auto;
+  overflow-x: auto;
   max-height: 400px;
 }
 
@@ -782,7 +828,7 @@ export default {
 .transactions-table thead {
   position: sticky;
   top: 0;
-  background: #f8fafc;
+  background: var(--color-surface-alt);
   z-index: 1;
 }
 
@@ -790,11 +836,11 @@ export default {
   text-align: left;
   padding: 0.625rem 0.75rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--color-text-secondary);
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .transactions-table th.text-right {
@@ -803,7 +849,7 @@ export default {
 
 .transactions-table td {
   padding: 0.75rem 0.75rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid var(--color-track);
   font-size: 0.875rem;
 }
 
@@ -813,37 +859,37 @@ export default {
 }
 
 .transactions-table tbody tr:hover {
-  background: #f8fafc;
+  background: var(--color-surface-alt);
 }
 
 .transactions-table tbody tr.clickable-row:hover {
-  background: #eff6ff;
+  background: var(--color-primary-50);
 }
 
 .transaction-id {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-weight: 500;
   font-family: 'Monaco', 'Courier New', monospace;
   font-size: 0.813rem;
 }
 
 .transaction-description {
-  color: #0f172a;
+  color: var(--color-text);
   font-weight: 500;
 }
 
 .transaction-vendor {
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .transaction-date {
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 0.813rem;
 }
 
 .transaction-amount {
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 .text-right {

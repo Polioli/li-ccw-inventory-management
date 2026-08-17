@@ -191,8 +191,8 @@ const getSummaryCardClass = () => {
 
 .modal-container {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
   max-width: 700px;
   width: 100%;
   max-height: 90vh;
@@ -206,32 +206,32 @@ const getSummaryCardClass = () => {
   align-items: center;
   justify-content: space-between;
   padding: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .modal-title {
   font-size: 1.25rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-text);
   letter-spacing: -0.025em;
 }
 
 .close-button {
   background: none;
   border: none;
-  color: #64748b;
+  color: var(--color-text-muted);
   cursor: pointer;
   padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   transition: all 0.15s ease;
 }
 
 .close-button:hover {
   background: #f1f5f9;
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 .modal-body {
@@ -245,14 +245,14 @@ const getSummaryCardClass = () => {
   align-items: center;
   gap: 1.25rem;
   padding-bottom: 1.5rem;
-  border-bottom: 1px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
   margin-bottom: 1.5rem;
 }
 
 .item-icon {
   width: 64px;
   height: 64px;
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -261,7 +261,7 @@ const getSummaryCardClass = () => {
 }
 
 .item-icon.success-icon {
-  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  background: linear-gradient(135deg, #10b981 0%, var(--color-success-solid) 100%);
 }
 
 .item-icon.warning-icon {
@@ -269,7 +269,7 @@ const getSummaryCardClass = () => {
 }
 
 .item-icon.danger-icon {
-  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  background: linear-gradient(135deg, #ef4444 0%, var(--color-danger-solid) 100%);
 }
 
 .item-title-section {
@@ -280,19 +280,19 @@ const getSummaryCardClass = () => {
 .item-name {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-text);
   margin: 0 0 0.5rem 0;
 }
 
 .item-sku {
   font-size: 0.875rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-family: 'Monaco', 'Courier New', monospace;
 }
 
 .stock-badge {
   padding: 0.5rem 1rem;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 0.875rem;
   font-weight: 600;
   text-transform: uppercase;
@@ -301,18 +301,18 @@ const getSummaryCardClass = () => {
 }
 
 .stock-badge.success {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--color-success-surface);
+  color: var(--color-success-text);
 }
 
 .stock-badge.warning {
-  background: #fed7aa;
-  color: #92400e;
+  background: var(--color-warning-surface);
+  color: var(--color-warning-text);
 }
 
 .stock-badge.danger {
-  background: #fecaca;
-  color: #991b1b;
+  background: var(--color-danger-surface);
+  color: var(--color-danger-text);
 }
 
 .stock-summary {
@@ -334,18 +334,18 @@ const getSummaryCardClass = () => {
 }
 
 .summary-card.success-card {
-  border-color: #a7f3d0;
-  background: #d1fae5;
+  border-color: var(--color-success-border);
+  background: var(--color-success-surface);
 }
 
 .summary-card.warning-card {
-  border-color: #fed7aa;
-  background: #fffbeb;
+  border-color: var(--color-warning-border);
+  background: var(--color-warning-surface);
 }
 
 .summary-card.danger-card {
-  border-color: #fecaca;
-  background: #fef2f2;
+  border-color: var(--color-danger-border);
+  background: var(--color-danger-surface);
 }
 
 .summary-label {
@@ -353,19 +353,19 @@ const getSummaryCardClass = () => {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #64748b;
+  color: var(--color-text-muted);
   margin-bottom: 0.5rem;
 }
 
 .summary-value {
   font-size: 1.875rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 .summary-subtitle {
   font-size: 0.75rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   margin-top: 0.25rem;
 }
 
@@ -386,24 +386,24 @@ const getSummaryCardClass = () => {
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .info-value {
   font-size: 0.938rem;
-  color: #0f172a;
+  color: var(--color-text);
   font-weight: 500;
 }
 
 .info-value.total-value {
   font-size: 1.125rem;
-  color: #2563eb;
+  color: var(--color-primary-600);
   font-weight: 700;
 }
 
 .modal-footer {
   padding: 1.5rem;
-  border-top: 1px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
   display: flex;
   justify-content: flex-end;
   gap: 0.75rem;
@@ -412,19 +412,19 @@ const getSummaryCardClass = () => {
 .btn-secondary {
   padding: 0.625rem 1.25rem;
   background: #f1f5f9;
-  border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
   font-weight: 500;
   font-size: 0.875rem;
-  color: #334155;
+  color: var(--color-text-secondary);
   cursor: pointer;
   transition: all 0.15s ease;
   font-family: inherit;
 }
 
 .btn-secondary:hover {
-  background: #e2e8f0;
-  border-color: #cbd5e1;
+  background: var(--color-border);
+  border-color: var(--color-border-strong);
 }
 
 /* Modal transition animations */

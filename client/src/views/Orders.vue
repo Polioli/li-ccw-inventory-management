@@ -9,22 +9,10 @@
     <div v-else-if="error" class="error">{{ error }}</div>
     <div v-else>
       <div class="stats-grid">
-        <div class="stat-card success">
-          <div class="stat-label">{{ t('status.delivered') }}</div>
-          <div class="stat-value">{{ getOrdersByStatus('Delivered').length }}</div>
-        </div>
-        <div class="stat-card info">
-          <div class="stat-label">{{ t('status.shipped') }}</div>
-          <div class="stat-value">{{ getOrdersByStatus('Shipped').length }}</div>
-        </div>
-        <div class="stat-card warning">
-          <div class="stat-label">{{ t('status.processing') }}</div>
-          <div class="stat-value">{{ getOrdersByStatus('Processing').length }}</div>
-        </div>
-        <div class="stat-card danger">
-          <div class="stat-label">{{ t('status.backordered') }}</div>
-          <div class="stat-value">{{ getOrdersByStatus('Backordered').length }}</div>
-        </div>
+        <StatCard :label="t('status.delivered')" :value="getOrdersByStatus('Delivered').length" variant="success" />
+        <StatCard :label="t('status.shipped')" :value="getOrdersByStatus('Shipped').length" variant="info" />
+        <StatCard :label="t('status.processing')" :value="getOrdersByStatus('Processing').length" variant="warning" />
+        <StatCard :label="t('status.backordered')" :value="getOrdersByStatus('Backordered').length" variant="danger" />
       </div>
 
       <div class="card">
@@ -83,9 +71,13 @@ import { ref, onMounted, watch, computed } from 'vue'
 import { api } from '../api'
 import { useFilters } from '../composables/useFilters'
 import { useI18n } from '../composables/useI18n'
+import StatCard from '../components/StatCard.vue'
 
 export default {
   name: 'Orders',
+  components: {
+    StatCard
+  },
   setup() {
     const { t, currentCurrency, translateProductName, translateCustomerName } = useI18n()
 
@@ -210,7 +202,7 @@ export default {
 
 .items-summary {
   cursor: pointer;
-  color: #3b82f6;
+  color: var(--color-primary-400);
   font-weight: 500;
   list-style: none;
   user-select: none;
@@ -234,7 +226,7 @@ export default {
 }
 
 .items-summary:hover {
-  color: #2563eb;
+  color: var(--color-primary-600);
   text-decoration: underline;
 }
 
@@ -244,10 +236,10 @@ export default {
   top: 100%;
   left: 0;
   margin-top: 0.5rem;
-  background: white;
-  border: 1px solid #e2e8f0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  box-shadow: var(--shadow-dropdown);
   padding: 0.75rem;
   z-index: 10;
   min-width: 300px;
@@ -269,11 +261,11 @@ export default {
 .item-name {
   font-size: 0.875rem;
   font-weight: 500;
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 .item-meta {
   font-size: 0.813rem;
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 </style>

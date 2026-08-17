@@ -1,0 +1,319 @@
+/* Design tokens + shared base classes for the Factory Inventory Management app.
+   Single source of truth — views must reuse these rather than redeclaring locally. */
+
+:root {
+  /* Neutrals */
+  --color-bg: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f8fafc;
+  --color-track: #f1f5f9;
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e1;
+  --color-text: #0f172a;
+  --color-text-secondary: #334155;
+  --color-text-muted: #64748b;
+  --color-text-faint: #94a3b8;
+
+  /* Primary (brand blue) */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-400: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1e40af;
+
+  /* Semantic — one canonical value per tier */
+  --color-success-surface: #d1fae5;
+  --color-success-border: #a7f3d0;
+  --color-success-text: #065f46;
+  --color-success-solid: #059669;
+
+  --color-warning-surface: #fed7aa;
+  --color-warning-border: #fdba74;
+  --color-warning-text: #92400e;
+  --color-warning-solid: #ea580c;
+
+  --color-danger-surface: #fecaca;
+  --color-danger-border: #fca5a5;
+  --color-danger-text: #991b1b;
+  --color-danger-solid: #dc2626;
+
+  --color-info-surface: #dbeafe;
+  --color-info-border: #93c5fd;
+  --color-info-text: #1e40af;
+  --color-info-solid: #2563eb;
+
+  /* "Stable" trend badge is a distinct concept, kept as its own indigo */
+  --color-stable-surface: #e0e7ff;
+  --color-stable-text: #3730a3;
+
+  /* Categorical chart palette — identity data only (inventory categories,
+     cost-flow segments), never status. Validated with the dataviz skill's
+     validate_palette.js: ALL CHECKS PASS at 4 slots against a white surface. */
+  --chart-cat-1: #2563eb;
+  --chart-cat-2: #1baf7a;
+  --chart-cat-3: #e87ba4;
+  --chart-cat-4: #4a3aa7;
+  --chart-cat-other: #64748b;
+
+  /* Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 999px;
+
+  /* Shadow */
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 3px rgba(15, 23, 42, 0.06);
+  --shadow-card-hover: 0 8px 20px rgba(15, 23, 42, 0.08), 0 2px 6px rgba(15, 23, 42, 0.04);
+  --shadow-dropdown: 0 12px 28px rgba(15, 23, 42, 0.12), 0 2px 6px rgba(15, 23, 42, 0.06);
+  --shadow-modal: 0 24px 48px rgba(15, 23, 42, 0.16), 0 8px 16px rgba(15, 23, 42, 0.08);
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --text-xs: 0.75rem;
+  --text-sm: 0.813rem;
+  --text-base: 0.875rem;
+  --text-md: 0.938rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.375rem;
+  --text-2xl: 1.875rem;
+
+  /* Layout */
+  --sidebar-width: 260px;
+  --topbar-height: 64px;
+
+  /* Breakpoints (referenced in comments — CSS can't consume vars in media queries) */
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--color-bg);
+  color: var(--color-text-secondary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ---------- page header (used inside every view) ---------- */
+
+.page-header {
+  margin-bottom: var(--space-6);
+}
+
+.page-header h2 {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--color-text);
+  margin-bottom: var(--space-1);
+  letter-spacing: -0.025em;
+}
+
+.page-header p {
+  color: var(--color-text-muted);
+  font-size: var(--text-md);
+}
+
+/* ---------- grids ---------- */
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-5);
+  margin-bottom: var(--space-6);
+}
+
+@media (max-width: 1023px) {
+  .stats-grid,
+  .kpi-grid,
+  .charts-grid,
+  .stats-grid-finance,
+  .two-column-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 767px) {
+  .stats-grid,
+  .kpi-grid,
+  .charts-grid,
+  .stats-grid-finance,
+  .two-column-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- cards ---------- */
+
+.card,
+.stat-card {
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  border: 1px solid var(--color-border);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card {
+  margin-bottom: var(--space-5);
+}
+
+.stat-card:hover,
+.card:hover {
+  border-color: var(--color-border-strong);
+  box-shadow: var(--shadow-card-hover);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-4);
+  padding-bottom: var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.card-title {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.025em;
+}
+
+.stat-label {
+  color: var(--color-text-muted);
+  font-size: var(--text-base);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: var(--space-3);
+}
+
+.stat-value {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--color-text);
+  letter-spacing: -0.025em;
+}
+
+.stat-card.warning .stat-value { color: var(--color-warning-solid); }
+.stat-card.success .stat-value { color: var(--color-success-solid); }
+.stat-card.danger .stat-value { color: var(--color-danger-solid); }
+.stat-card.info .stat-value { color: var(--color-info-solid); }
+
+/* ---------- tables ---------- */
+
+.table-container,
+.table-scroll {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background: var(--color-surface-alt);
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+th {
+  text-align: left;
+  padding: var(--space-2) var(--space-3);
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+td {
+  padding: var(--space-2) var(--space-3);
+  border-top: 1px solid var(--color-track);
+  color: var(--color-text-secondary);
+  font-size: var(--text-base);
+}
+
+tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+tbody tr:hover {
+  background: var(--color-surface-alt);
+}
+
+/* ---------- badges ---------- */
+
+.badge {
+  display: inline-block;
+  padding: 0.313rem var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+
+.badge.success,
+.badge.increasing {
+  background: var(--color-success-surface);
+  color: var(--color-success-text);
+}
+
+.badge.warning,
+.badge.medium {
+  background: var(--color-warning-surface);
+  color: var(--color-warning-text);
+}
+
+.badge.danger,
+.badge.decreasing,
+.badge.high {
+  background: var(--color-danger-surface);
+  color: var(--color-danger-text);
+}
+
+.badge.info,
+.badge.low {
+  background: var(--color-info-surface);
+  color: var(--color-info-text);
+}
+
+.badge.stable {
+  background: var(--color-stable-surface);
+  color: var(--color-stable-text);
+}
+
+/* ---------- misc ---------- */
+
+.loading {
+  text-align: center;
+  padding: var(--space-8);
+  color: var(--color-text-muted);
+  font-size: var(--text-md);
+}
+
+.error {
+  background: #fef2f2;
+  border: 1px solid var(--color-danger-surface);
+  color: var(--color-danger-text);
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+  margin: var(--space-4) 0;
+  font-size: var(--text-md);
+}
