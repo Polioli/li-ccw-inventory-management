@@ -120,6 +120,124 @@ class CreatePurchaseOrderRequest(BaseModel):
     expected_delivery_date: str
     notes: Optional[str] = None
 
+class RestockRecommendationItem(BaseModel):
+    sku: str
+    name: str
+    category: str
+    warehouse: str
+    quantity_on_hand: int
+    reorder_point: int
+    target_stock_level: int
+    quantity_needed: int
+    quantity_to_order: int
+    unit_cost: float
+    line_total: float
+    trend: str
+    priority: str
+    priority_reason: str
+    fully_funded: bool
+
+class RestockingRecommendationResponse(BaseModel):
+    budget: float
+    total_cost: float
+    remaining_budget: float
+    budget_utilized_percent: float
+    items_needing_restock: int
+    items_recommended: int
+    recommendations: List[RestockRecommendationItem]
+
+# Restocking recommendation logic
+DEMAND_TARGET_MULTIPLIER = {"increasing": 1.5, "stable": 1.0, "decreasing": 0.75}
+TREND_SCORE_BONUS = {"increasing": 0.5, "stable": 0.0, "decreasing": -0.25}
+
+def build_restocking_recommendations(inventory: list, demand_forecasts: list, budget: float) -> dict:
+    """Rank inventory items by restocking need and greedily allocate budget."""
+    forecast_by_sku = {f["item_sku"]: f for f in demand_forecasts}
+
+    candidates = []
+    for item in inventory:
+        forecast = forecast_by_sku.get(item["sku"])
+        trend = forecast["trend"].lower() if forecast else "stable"
+
+        target_stock_level = round(item["reorder_point"] * DEMAND_TARGET_MULTIPLIER[trend])
+        quantity_needed = max(target_stock_level - item["quantity_on_hand"], 0)
+        if quantity_needed == 0:
+            continue
+
+        stock_gap_ratio = (item["reorder_point"] - item["quantity_on_hand"]) / item["reorder_point"]
+        priority_score = stock_gap_ratio + TREND_SCORE_BONUS[trend]
+
+        if item["quantity_on_hand"] <= item["reorder_point"] and trend == "increasing":
+            priority, priority_reason = "high", "Below reorder point with rising demand"
+        elif item["quantity_on_hand"] <= item["reorder_point"]:
+            priority, priority_reason = "medium", "Below reorder point"
+        else:
+            priority, priority_reason = "low", "Above reorder point but rising demand requires extra buffer"
+
+        candidates.append({
+            "sku": item["sku"],
+            "name": item["name"],
+            "category": item["category"],
+            "warehouse": item["warehouse"],
+            "quantity_on_hand": item["quantity_on_hand"],
+            "reorder_point": item["reorder_point"],
+            "target_stock_level": target_stock_level,
+            "quantity_needed": quantity_needed,
+            "unit_cost": item["unit_cost"],
+            "trend": trend,
+            "priority": priority,
+            "priority_reason": priority_reason,
+            "priority_score": priority_score,
+        })
+
+    candidates.sort(key=lambda c: (-c["priority_score"], -(c["quantity_needed"] * c["unit_cost"]), c["sku"]))
+
+    remaining_budget = round(budget, 2)
+    total_cost = 0.0
+    recommendations = []
+
+    for c in candidates:
+        full_cost = round(c["quantity_needed"] * c["unit_cost"], 2)
+        if full_cost <= remaining_budget:
+            quantity_to_order, line_total, fully_funded = c["quantity_needed"], full_cost, True
+        else:
+            quantity_to_order = int(remaining_budget // c["unit_cost"])
+            line_total, fully_funded = round(quantity_to_order * c["unit_cost"], 2), False
+
+        if quantity_to_order <= 0:
+            continue
+
+        remaining_budget = round(remaining_budget - line_total, 2)
+        total_cost = round(total_cost + line_total, 2)
+
+        recommendations.append(RestockRecommendationItem(
+            sku=c["sku"],
+            name=c["name"],
+            category=c["category"],
+            warehouse=c["warehouse"],
+            quantity_on_hand=c["quantity_on_hand"],
+            reorder_point=c["reorder_point"],
+            target_stock_level=c["target_stock_level"],
+            quantity_needed=c["quantity_needed"],
+            quantity_to_order=quantity_to_order,
+            unit_cost=c["unit_cost"],
+            line_total=line_total,
+            trend=c["trend"],
+            priority=c["priority"],
+            priority_reason=c["priority_reason"],
+            fully_funded=fully_funded,
+        ))
+
+    return {
+        "budget": budget,
+        "total_cost": total_cost,
+        "remaining_budget": remaining_budget,
+        "budget_utilized_percent": round(total_cost / budget * 100, 1),
+        "items_needing_restock": len(candidates),
+        "items_recommended": len(recommendations),
+        "recommendations": recommendations,
+    }
+
 # API endpoints
 @app.get("/")
 def root():
@@ -178,6 +296,19 @@ def get_backlog():
         item_dict["has_purchase_order"] = has_po
         result.append(item_dict)
     return result
+
+@app.get("/api/restocking/recommendations", response_model=RestockingRecommendationResponse)
+def get_restocking_recommendations(
+    budget: float,
+    warehouse: Optional[str] = None,
+    category: Optional[str] = None
+):
+    """Recommend which products to restock given a dollar budget."""
+    if budget <= 0:
+        raise HTTPException(status_code=400, detail="Budget must be a positive number")
+
+    filtered_inventory = apply_filters(inventory_items, warehouse, category)
+    return build_restocking_recommendations(filtered_inventory, demand_forecasts, budget)
 
 @app.get("/api/dashboard/summary")
 def get_dashboard_summary(

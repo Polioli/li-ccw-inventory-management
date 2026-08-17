@@ -11,60 +11,40 @@
       <div class="kpi-section">
         <h3 class="section-title">{{ t('dashboard.kpi.title') }}</h3>
         <div class="kpi-grid">
-          <div class="kpi-card">
-            <div class="kpi-header">
-              <span class="kpi-label">{{ t('dashboard.kpi.inventoryTurnover') }}</span>
-            </div>
-            <div class="kpi-value">4.2</div>
+          <StatCard :label="t('dashboard.kpi.inventoryTurnover')" value="4.2" variant="neutral">
             <div class="kpi-goal">{{ t('dashboard.kpi.goal') }}: 4.5 (-6.67%)</div>
             <div class="kpi-progress-bar">
               <div class="kpi-progress" style="width: 93.33%"></div>
             </div>
-          </div>
+          </StatCard>
 
-          <div class="kpi-card">
-            <div class="kpi-header">
-              <span class="kpi-label">{{ t('dashboard.kpi.ordersFulfilled') }}</span>
-            </div>
-            <div class="kpi-value">{{ ordersData.fulfilled }}</div>
+          <StatCard :label="t('dashboard.kpi.ordersFulfilled')" :value="ordersData.fulfilled" variant="info">
             <div class="kpi-goal">{{ t('dashboard.kpi.goal') }}: {{ ordersData.goal }} ({{ calculatePercentage(ordersData.fulfilled, ordersData.goal) }}%)</div>
             <div class="kpi-progress-bar">
               <div class="kpi-progress" :style="{ width: calculatePercentage(ordersData.fulfilled, ordersData.goal) + '%' }"></div>
             </div>
-          </div>
+          </StatCard>
 
-          <div class="kpi-card">
-            <div class="kpi-header">
-              <span class="kpi-label">{{ t('dashboard.kpi.orderFillRate') }}</span>
-            </div>
-            <div class="kpi-value">{{ fillRate }}%</div>
+          <StatCard :label="t('dashboard.kpi.orderFillRate')" :value="`${fillRate}%`" variant="success">
             <div class="kpi-goal">{{ t('dashboard.kpi.goal') }}: 95% ({{ fillRate - 95 > 0 ? '+' : '' }}{{ (fillRate - 95).toFixed(2) }}%)</div>
             <div class="kpi-progress-bar">
               <div class="kpi-progress success" :style="{ width: (fillRate / 95 * 100) + '%' }"></div>
             </div>
-          </div>
+          </StatCard>
 
-          <div class="kpi-card">
-            <div class="kpi-header">
-              <span class="kpi-label">{{ t(selectedPeriod === 'all' ? 'dashboard.kpi.revenueYTD' : 'dashboard.kpi.revenueMTD') }}</span>
-            </div>
-            <div class="kpi-value">{{ formatCurrency(Math.round(summary.total_orders_value), selectedCurrency) }}</div>
+          <StatCard :label="t(selectedPeriod === 'all' ? 'dashboard.kpi.revenueYTD' : 'dashboard.kpi.revenueMTD')" :value="formatCurrency(Math.round(summary.total_orders_value), selectedCurrency)" variant="neutral">
             <div class="kpi-goal">{{ t('dashboard.kpi.goal') }}: {{ formatCurrency(revenueGoal, selectedCurrency) }} ({{ summary.total_orders_value > revenueGoal ? '+' : '' }}{{ ((summary.total_orders_value / revenueGoal - 1) * 100).toFixed(1) }}%)</div>
             <div class="kpi-progress-bar">
               <div class="kpi-progress" :style="{ width: Math.min((summary.total_orders_value / revenueGoal * 100), 100) + '%' }"></div>
             </div>
-          </div>
+          </StatCard>
 
-          <div class="kpi-card">
-            <div class="kpi-header">
-              <span class="kpi-label">{{ t('dashboard.kpi.avgProcessingTime') }}</span>
-            </div>
-            <div class="kpi-value">2.8</div>
+          <StatCard :label="t('dashboard.kpi.avgProcessingTime')" value="2.8" variant="success">
             <div class="kpi-goal">{{ t('dashboard.kpi.goal') }}: 3.0 (-6.67%)</div>
             <div class="kpi-progress-bar">
               <div class="kpi-progress success" style="width: 93.33%"></div>
             </div>
-          </div>
+          </StatCard>
         </div>
       </div>
 
@@ -85,19 +65,19 @@
               <!-- Left: Donut Chart -->
               <div class="order-health-chart">
                 <svg viewBox="0 0 200 200" class="donut-svg-compact">
-                  <circle cx="100" cy="100" r="65" fill="none" stroke="#e2e8f0" stroke-width="25"/>
-                  <circle cx="100" cy="100" r="65" fill="none" stroke="#10b981" stroke-width="25"
+                  <circle cx="100" cy="100" r="65" fill="none" stroke="var(--color-border)" stroke-width="25"/>
+                  <circle cx="100" cy="100" r="65" fill="none" stroke="var(--color-success-solid)" stroke-width="25"
                     :stroke-dasharray="`${getCircleSegment(statusData.delivered)} 408`"
                     stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
-                  <circle cx="100" cy="100" r="65" fill="none" stroke="#3b82f6" stroke-width="25"
+                  <circle cx="100" cy="100" r="65" fill="none" stroke="var(--color-info-solid)" stroke-width="25"
                     :stroke-dasharray="`${getCircleSegment(statusData.shipped)} 408`"
                     :stroke-dashoffset="`-${getCircleSegment(statusData.delivered)}`"
                     transform="rotate(-90 100 100)"/>
-                  <circle cx="100" cy="100" r="65" fill="none" stroke="#f59e0b" stroke-width="25"
+                  <circle cx="100" cy="100" r="65" fill="none" stroke="var(--color-warning-solid)" stroke-width="25"
                     :stroke-dasharray="`${getCircleSegment(statusData.processing)} 408`"
                     :stroke-dashoffset="`-${getCircleSegment(statusData.delivered) + getCircleSegment(statusData.shipped)}`"
                     transform="rotate(-90 100 100)"/>
-                  <circle cx="100" cy="100" r="65" fill="none" stroke="#ef4444" stroke-width="25"
+                  <circle cx="100" cy="100" r="65" fill="none" stroke="var(--color-danger-solid)" stroke-width="25"
                     :stroke-dasharray="`${getCircleSegment(statusData.backordered)} 408`"
                     :stroke-dashoffset="`-${getCircleSegment(statusData.delivered) + getCircleSegment(statusData.shipped) + getCircleSegment(statusData.processing)}`"
                     transform="rotate(-90 100 100)"/>
@@ -105,10 +85,10 @@
                   <text x="100" y="120" text-anchor="middle" class="donut-center-value">{{ orderHealthMetrics.totalOrders }}</text>
                 </svg>
                 <div class="donut-legend-compact">
-                  <div class="legend-item-compact"><span class="legend-dot" style="background: #10b981"></span>{{ t('status.delivered') }}</div>
-                  <div class="legend-item-compact"><span class="legend-dot" style="background: #3b82f6"></span>{{ t('status.shipped') }}</div>
-                  <div class="legend-item-compact"><span class="legend-dot" style="background: #f59e0b"></span>{{ t('status.processing') }}</div>
-                  <div class="legend-item-compact"><span class="legend-dot" style="background: #ef4444"></span>{{ t('status.backordered') }}</div>
+                  <div class="legend-item-compact"><span class="legend-dot" style="background: var(--color-success-solid)"></span>{{ t('status.delivered') }}</div>
+                  <div class="legend-item-compact"><span class="legend-dot" style="background: var(--color-info-solid)"></span>{{ t('status.shipped') }}</div>
+                  <div class="legend-item-compact"><span class="legend-dot" style="background: var(--color-warning-solid)"></span>{{ t('status.processing') }}</div>
+                  <div class="legend-item-compact"><span class="legend-dot" style="background: var(--color-danger-solid)"></span>{{ t('status.backordered') }}</div>
                 </div>
               </div>
 
@@ -304,12 +284,14 @@ import { useI18n } from '../composables/useI18n'
 import { formatCurrency } from '../utils/currency'
 import ProductDetailModal from '../components/ProductDetailModal.vue'
 import BacklogDetailModal from '../components/BacklogDetailModal.vue'
+import StatCard from '../components/StatCard.vue'
 
 export default {
   name: 'Dashboard',
   components: {
     ProductDetailModal,
     BacklogDetailModal,
+    StatCard,
   },
   setup() {
     const { t, currentCurrency, translateProductName, translateWarehouse } = useI18n()
@@ -408,8 +390,11 @@ export default {
       // Filter inventory items to only include those with orders in the selected period
       const categoryMap = {}
 
-      // Use a single neutral slate/gray color for all categories
-      const singleColor = '#64748b' // Neutral slate gray color
+      // Deterministic categorical palette (validated for CVD-safety), assigned
+      // in the order categories are first encountered.
+      const categoryPalette = ['#2563eb', '#1baf7a', '#e87ba4', '#4a3aa7']
+      const otherColor = '#64748b'
+      let paletteIndex = 0
 
       // Get SKUs from orders in the filtered time period
       const orderedSkus = new Set()
@@ -433,10 +418,11 @@ export default {
           categoryMap[cat] = {
             name: item.category,
             value: 0,
-            color: singleColor,
+            color: paletteIndex < categoryPalette.length ? categoryPalette[paletteIndex] : otherColor,
             category: cat,
             count: 0
           }
+          paletteIndex++
         }
         categoryMap[cat].value += item.quantity_on_hand * item.unit_cost
         categoryMap[cat].count += 1
@@ -448,42 +434,6 @@ export default {
     const maxCategoryValue = computed(() => {
       if (categoryData.value.length === 0) return 1
       return Math.max(...categoryData.value.map(c => c.value))
-    })
-
-    const orderTrendData = computed(() => {
-      // Group orders by month from the actual data
-      const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-      // Initialize all months with 0 orders
-      const monthMap = {}
-      monthNames.forEach(month => {
-        monthMap[month] = { month, orders: 0 }
-      })
-
-      // Count orders for each month
-      if (Array.isArray(allOrders.value)) {
-        allOrders.value.forEach(order => {
-          if (order && order.order_date) {
-            const date = new Date(order.order_date)
-            const monthIndex = date.getMonth()
-            // Check if monthIndex is valid (0-11)
-            if (!isNaN(monthIndex) && monthIndex >= 0 && monthIndex <= 11) {
-              const monthName = monthNames[monthIndex]
-              monthMap[monthName].orders++
-            }
-          }
-        })
-      }
-
-      // Return all months in order
-      return monthNames.map(month => monthMap[month])
-    })
-
-    const maxOrderCount = computed(() => {
-      if (orderTrendData.value.length === 0) return 10
-      const max = Math.max(...orderTrendData.value.map(d => d.orders))
-      // Round up to nearest 10 for cleaner axis, minimum 10
-      return Math.max(10, Math.ceil(max / 10) * 10)
     })
 
     const topProducts = computed(() => {
@@ -592,7 +542,8 @@ export default {
     })
 
     const getCircleSegment = (value) => {
-      return totalOrders.value > 0 ? (value / totalOrders.value) * 440 : 0
+      const circumference = 2 * Math.PI * 65
+      return totalOrders.value > 0 ? (value / totalOrders.value) * circumference : 0
     }
 
     const getStockBadge = (level) => {
@@ -690,8 +641,6 @@ export default {
       orderHealthMetrics,
       categoryData,
       maxCategoryValue,
-      orderTrendData,
-      maxOrderCount,
       topProducts,
       backlogItems,
       calculatePercentage,
@@ -736,7 +685,7 @@ export default {
 
 .header-meta {
   font-size: 0.813rem;
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .kpi-section {
@@ -746,7 +695,7 @@ export default {
 .section-title {
   font-size: 1rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--color-text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   margin-bottom: 1rem;
@@ -758,63 +707,48 @@ export default {
   gap: 1rem;
 }
 
-.kpi-card {
-  background: white;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  padding: 1rem;
-}
-
-.kpi-header {
-  margin-bottom: 0.75rem;
-}
-
-.kpi-label {
-  font-size: 0.813rem;
-  font-weight: 600;
-  color: #64748b;
-  text-transform: uppercase;
-  letter-spacing: 0.025em;
-}
-
-.kpi-value {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #0f172a;
-  margin-bottom: 0.5rem;
-  letter-spacing: -0.025em;
+@media (max-width: 480px) {
+  .kpi-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .kpi-goal {
   font-size: 0.813rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   margin-bottom: 0.75rem;
 }
 
 .kpi-progress-bar {
   width: 100%;
   height: 6px;
-  background: #f1f5f9;
+  background: var(--color-track);
   border-radius: 3px;
   overflow: hidden;
 }
 
 .kpi-progress {
   height: 100%;
-  background: #3b82f6;
+  background: var(--color-info-solid);
   border-radius: 3px;
   transition: width 0.6s ease;
 }
 
 .kpi-progress.success {
-  background: #10b981;
+  background: var(--color-success-solid);
 }
 
 .charts-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.25rem;
   margin-bottom: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .charts-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .chart-card.full-width {
@@ -848,7 +782,7 @@ export default {
   align-items: center;
   gap: 0.625rem;
   font-size: 0.875rem;
-  color: #475569;
+  color: var(--color-text-secondary);
 }
 
 .legend-dot {
@@ -860,11 +794,17 @@ export default {
 /* Order Health Dashboard Styles */
 .order-health-container {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 1.5rem;
   align-items: center;
   padding: 1rem;
   min-height: 240px;
+}
+
+@media (max-width: 640px) {
+  .order-health-container {
+    grid-template-columns: 1fr;
+  }
 }
 
 .order-health-chart {
@@ -883,7 +823,7 @@ export default {
 
 .donut-center-label {
   font-size: 12px;
-  fill: #64748b;
+  fill: var(--color-text-muted);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -891,7 +831,7 @@ export default {
 
 .donut-center-value {
   font-size: 36px;
-  fill: #0f172a;
+  fill: var(--color-text);
   font-weight: 700;
 }
 
@@ -906,7 +846,7 @@ export default {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.875rem;
-  color: #475569;
+  color: var(--color-text-secondary);
   font-weight: 500;
 }
 
@@ -928,7 +868,7 @@ export default {
 
 .health-metric-label {
   font-size: 0.688rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -937,20 +877,20 @@ export default {
 .health-metric-value {
   font-size: 1.75rem;
   font-weight: 700;
-  color: #0f172a;
+  color: var(--color-text);
   letter-spacing: -0.025em;
 }
 
 .metric-good {
-  color: #10b981;
+  color: var(--color-success-solid);
 }
 
 .metric-warning {
-  color: #f59e0b;
+  color: var(--color-warning-solid);
 }
 
 .metric-bad {
-  color: #ef4444;
+  color: var(--color-danger-solid);
 }
 
 .horizontal-bar-chart {
@@ -971,14 +911,14 @@ export default {
   min-width: 120px;
   font-size: 0.875rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--color-text-secondary);
   flex-shrink: 0;
 }
 
 .h-bar-container {
   flex: 1;
   height: 32px;
-  background: #f8fafc;
+  background: var(--color-surface-alt);
   border-radius: 6px;
   overflow: hidden;
 }
@@ -998,86 +938,10 @@ export default {
   color: white;
 }
 
-.line-chart {
-  display: flex;
-  gap: 1.5rem;
-  height: 280px;
-}
-
-.line-y-axis {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding-right: 1rem;
-  font-size: 0.75rem;
-  color: #94a3b8;
-  border-right: 1px solid #e2e8f0;
-}
-
-.line-chart-area {
-  flex: 1;
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-around;
-  gap: 0.5rem;
-}
-
-.line-bar-group {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1;
-  max-width: 80px;
-  gap: 0.5rem;
-}
-
-.line-bar-wrapper {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-.line-bar {
-  width: 100%;
-  max-width: 60px;
-  min-height: 8px;
-  background: #3b82f6;
-  border-radius: 6px 6px 0 0;
-  transition: all 0.3s ease;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
-}
-
-.line-bar.empty-bar {
-  background: #e2e8f0;
-  box-shadow: none;
-  min-height: 4px;
-}
-
-.line-bar:hover {
-  background: #2563eb;
-  transform: scaleY(1.05);
-}
-
-.line-bar.empty-bar:hover {
-  background: #cbd5e1;
-  transform: none;
-}
-
-.line-bar-label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #64748b;
-  white-space: nowrap;
-}
-
 .no-data {
   padding: 2rem;
   text-align: center;
-  color: #94a3b8;
+  color: var(--color-text-faint);
   font-size: 0.875rem;
 }
 
@@ -1093,12 +957,12 @@ export default {
 .success-icon {
   width: 48px;
   height: 48px;
-  color: #10b981;
+  color: var(--color-success-solid);
 }
 
 .no-backlog-text {
   font-size: 1.125rem;
-  color: #10b981;
+  color: var(--color-success-solid);
   font-weight: 600;
   margin: 0;
 }
@@ -1109,7 +973,7 @@ export default {
 }
 
 .clickable-row:hover {
-  background: #eff6ff !important;
+  background: var(--color-primary-50) !important;
 }
 
 /* Tasks Card Styles */
@@ -1130,7 +994,7 @@ export default {
 .task-input {
   flex: 1;
   padding: 0.75rem;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-border);
   border-radius: 8px;
   font-size: 0.95rem;
   transition: border-color 0.2s ease;
@@ -1164,7 +1028,7 @@ export default {
 .no-tasks {
   text-align: center;
   padding: 2rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-style: italic;
 }
 
@@ -1179,14 +1043,14 @@ export default {
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem;
-  background: #f8fafc;
+  background: var(--color-surface-alt);
   border-radius: 8px;
   border: 2px solid transparent;
   transition: all 0.2s ease;
 }
 
 .task-item:hover {
-  border-color: #e2e8f0;
+  border-color: var(--color-border);
   background: white;
 }
 
@@ -1196,7 +1060,7 @@ export default {
 
 .task-item.completed .task-text {
   text-decoration: line-through;
-  color: #94a3b8;
+  color: var(--color-text-faint);
 }
 
 .task-checkbox {
@@ -1210,7 +1074,7 @@ export default {
   flex: 1;
   cursor: pointer;
   user-select: none;
-  color: #0f172a;
+  color: var(--color-text);
   font-size: 0.95rem;
 }
 
@@ -1232,7 +1096,7 @@ export default {
 }
 
 .task-delete-btn:hover {
-  background: #dc2626;
+  background: var(--color-danger-solid);
   transform: scale(1.1);
 }
 
@@ -1248,18 +1112,18 @@ export default {
 }
 
 .po-button.create {
-  background: #3b82f6;
+  background: var(--color-primary-400);
   color: white;
 }
 
 .po-button.create:hover {
-  background: #2563eb;
+  background: var(--color-primary-600);
   transform: translateY(-1px);
   box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
 }
 
 .po-button.view {
-  background: #64748b;
+  background: var(--color-text-muted);
   color: white;
 }
 

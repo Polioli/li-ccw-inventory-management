@@ -255,13 +255,13 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 2000;
 }
 
 .modal-container {
   background: white;
-  border-radius: 12px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
   width: 90%;
   max-width: 700px;
   max-height: 85vh;
@@ -278,32 +278,32 @@ export default {
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem 2rem;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 1px solid var(--color-border);
 }
 
 .modal-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #0f172a;
+  color: var(--color-text);
   margin: 0;
 }
 
 .close-button {
   background: none;
   border: none;
-  color: #64748b;
+  color: var(--color-text-muted);
   cursor: pointer;
   padding: 0.5rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   transition: all 0.2s ease;
 }
 
 .close-button:hover {
   background: #f1f5f9;
-  color: #0f172a;
+  color: var(--color-text);
 }
 
 .modal-body {
@@ -314,7 +314,7 @@ export default {
 
 .modal-footer {
   padding: 1.5rem 2rem;
-  border-top: 2px solid #e2e8f0;
+  border-top: 1px solid var(--color-border);
   display: flex;
   justify-content: flex-end;
   gap: 1rem;
@@ -323,9 +323,9 @@ export default {
 .btn-secondary {
   padding: 0.75rem 1.5rem;
   background: #f1f5f9;
-  color: #475569;
+  color: var(--color-text-secondary);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -337,8 +337,8 @@ export default {
 
 /* Task Form */
 .task-form {
-  background: #f8fafc;
-  border-radius: 12px;
+  background: var(--color-surface-alt);
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
 }
@@ -372,14 +372,14 @@ export default {
 label {
   font-size: 0.875rem;
   font-weight: 600;
-  color: #475569;
+  color: var(--color-text-secondary);
 }
 
 .task-input,
 .task-select {
   padding: 0.75rem;
-  border: 2px solid #e2e8f0;
-  border-radius: 8px;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius-md);
   font-size: 0.95rem;
   transition: border-color 0.2s ease;
   font-family: inherit;
@@ -388,7 +388,7 @@ label {
 .task-input:focus,
 .task-select:focus {
   outline: none;
-  border-color: #667eea;
+  border-color: var(--color-primary-600);
 }
 
 .task-select {
@@ -398,10 +398,10 @@ label {
 
 .task-add-btn {
   padding: 0.75rem 1.75rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--color-primary-600) 0%, var(--color-primary-700) 100%);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-md);
   font-weight: 600;
   cursor: pointer;
   transition: transform 0.2s ease, opacity 0.2s ease;
@@ -420,14 +420,14 @@ label {
 
 .tasks-divider {
   height: 1px;
-  background: #e2e8f0;
+  background: var(--color-border);
   margin: 2rem 0;
 }
 
 .no-tasks {
   text-align: center;
   padding: 3rem;
-  color: #64748b;
+  color: var(--color-text-muted);
   font-size: 1.1rem;
   font-style: italic;
 }
@@ -440,7 +440,7 @@ label {
 
 .task-item {
   background: white;
-  border: 2px solid #e2e8f0;
+  border: 2px solid var(--color-border);
   border-radius: 10px;
   padding: 1rem 1.25rem;
   transition: all 0.2s ease;
@@ -452,15 +452,15 @@ label {
 }
 
 .task-item.priority-high {
-  border-left: 4px solid #dc2626;
+  border-left: 4px solid var(--color-danger-solid);
 }
 
 .task-item.priority-medium {
-  border-left: 4px solid #f59e0b;
+  border-left: 4px solid var(--color-warning-solid);
 }
 
 .task-item.priority-low {
-  border-left: 4px solid #2563eb;
+  border-left: 4px solid var(--color-primary-600);
 }
 
 .task-item.completed {
@@ -486,7 +486,7 @@ label {
   width: 20px;
   height: 20px;
   cursor: pointer;
-  accent-color: #667eea;
+  accent-color: var(--color-primary-600);
   flex-shrink: 0;
 }
 
@@ -494,7 +494,7 @@ label {
   flex: 1;
   cursor: pointer;
   user-select: none;
-  color: #0f172a;
+  color: var(--color-text);
   font-size: 1rem;
   font-weight: 600;
   line-height: 1.4;
@@ -508,10 +508,10 @@ label {
 .task-delete-btn {
   width: 28px;
   height: 28px;
-  background: #ef4444;
+  background: var(--color-danger-solid);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: var(--radius-sm);
   font-size: 1.25rem;
   line-height: 1;
   cursor: pointer;
@@ -524,7 +524,7 @@ label {
 }
 
 .task-delete-btn:hover {
-  background: #dc2626;
+  background: var(--color-danger-solid);
   transform: scale(1.1);
 }
 
@@ -544,18 +544,18 @@ label {
 }
 
 .priority-badge.high {
-  background: #fecaca;
-  color: #991b1b;
+  background: var(--color-danger-surface);
+  color: var(--color-danger-text);
 }
 
 .priority-badge.medium {
-  background: #fed7aa;
-  color: #92400e;
+  background: var(--color-warning-surface);
+  color: var(--color-warning-text);
 }
 
 .priority-badge.low {
-  background: #dbeafe;
-  color: #1e40af;
+  background: var(--color-info-surface);
+  color: var(--color-info-text);
 }
 
 .task-due-date {
@@ -563,7 +563,7 @@ label {
   align-items: center;
   gap: 0.5rem;
   font-size: 0.813rem;
-  color: #64748b;
+  color: var(--color-text-muted);
 }
 
 .task-due-date svg {
@@ -579,34 +579,34 @@ label {
 }
 
 .status-badge.overdue {
-  background: #fecaca;
-  color: #991b1b;
+  background: var(--color-danger-surface);
+  color: var(--color-danger-text);
 }
 
 .status-badge.urgent {
-  background: #fed7aa;
-  color: #92400e;
+  background: var(--color-warning-surface);
+  color: var(--color-warning-text);
 }
 
 .status-badge.upcoming {
-  background: #dbeafe;
-  color: #1e40af;
+  background: var(--color-info-surface);
+  color: var(--color-info-text);
 }
 
 .status-badge.completed {
-  background: #d1fae5;
-  color: #065f46;
+  background: var(--color-success-surface);
+  color: var(--color-success-text);
 }
 
 /* Modal transitions */
 .modal-enter-active,
 .modal-leave-active {
-  transition: opacity 0.3s ease;
+  transition: opacity 0.2s ease;
 }
 
 .modal-enter-active .modal-container,
 .modal-leave-active .modal-container {
-  transition: transform 0.3s ease;
+  transition: transform 0.2s ease;
 }
 
 .modal-enter-from,
@@ -616,6 +616,6 @@ label {
 
 .modal-enter-from .modal-container,
 .modal-leave-to .modal-container {
-  transform: scale(0.9);
+  transform: scale(0.95);
 }
 </style>
